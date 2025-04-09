@@ -1,11 +1,14 @@
 import { Component } from '@angular/core';
+import { FormsModule } from "@angular/forms";
+
 import { BudgetService } from "../../services/budget.service";
+import { Expense } from "../../models/expense.interface";
 
 import { MatCard } from "@angular/material/card";
 import { MatFormField, MatFormFieldModule } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
-import { FormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
+
 
 @Component({
   selector: 'app-add-expense',
@@ -22,22 +25,21 @@ import { MatButton } from "@angular/material/button";
   styleUrl: './add-expense.component.scss'
 })
 export class AddExpenseComponent {
-  name = "";
-  amount: number | null = null;
-
   constructor(private budgetService: BudgetService) {}
 
+  name: string = '';
+  amount: number | null = null;
+
   add(): void {
-    if (this.name && this.amount) {
-      this.budgetService.addExpenses({
-        id: this.generateId(),
-        name: this.name,
-        amount: this.amount,
-        date: new Date()
-      });
-      this.name = "";
-      this.amount = null;
-    }
+    const expense: Expense = {
+      id: this.generateId(),
+      name: this.name,
+      amount: this.amount || 0,
+      date: new Date()
+    };
+    this.budgetService.addExpenses(expense);
+    this.name = '';
+    this.amount = null;
   }
 
   private generateId(length = 10): string {
