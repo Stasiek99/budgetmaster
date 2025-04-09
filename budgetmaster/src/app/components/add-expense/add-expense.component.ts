@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
+import { BudgetService } from "../../services/budget.service";
 
 import { MatCard } from "@angular/material/card";
-import { MatFormField } from "@angular/material/form-field";
+import { MatFormField, MatFormFieldModule } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
@@ -14,7 +15,8 @@ import { MatButton } from "@angular/material/button";
     MatFormField,
     MatInput,
     FormsModule,
-    MatButton
+    MatButton,
+    MatFormFieldModule,
   ],
   templateUrl: './add-expense.component.html',
   styleUrl: './add-expense.component.scss'
@@ -23,7 +25,27 @@ export class AddExpenseComponent {
   name = "";
   amount: number | null = null;
 
+  constructor(private budgetService: BudgetService) {}
+
   add(): void {
-    console.log("Add: ", this.name, this.amount);
+    if (this.name && this.amount) {
+      this.budgetService.addExpenses({
+        id: this.generateId(),
+        name: this.name,
+        amount: this.amount,
+        date: new Date()
+      });
+      this.name = "";
+      this.amount = null;
+    }
+  }
+
+  private generateId(length = 10): string {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = "";
+    for (let i = 0; i < length; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
   }
 }
